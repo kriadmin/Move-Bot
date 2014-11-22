@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 var Regex, colors, filePath, fs, mv, walk, yesno;
 
 fs = require("fs");
