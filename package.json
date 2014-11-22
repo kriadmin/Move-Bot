@@ -1,35 +1,36 @@
 {
-  "name": "MoveBot",
-  "version": "0.0.0",
-  "description": "Organise your files with a simple JSON file!",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/OscarOrSomething/Move-Bot.git"
-  },
-  "keywords": [
+	"name": "MoveBot",
+	"version": "0.0.0",
+	"description": "Organise your files with a simple JSON file!",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/OscarOrSomething/Move-Bot.git"
+	},
+	"keywords": [
     "Organise",
     "Organize",
     "JSON",
     "Node",
     "Files"
   ],
-  "author": "Oscar Shrimpton",
-  "license": "Apache License Version 2.0",
-  "bugs": {
-    "url": "https://github.com/OscarOrSomething/Move-Bot/issues"
-  },
-  "devDependencies": {
-    "grunt-contrib-watch": "~0.6.1",
-    "grunt": "~0.4.5",
-    "grunt-contrib-coffee": "~0.12.0"
-  },
-  "dependencies": {
-    "walk": "~2.3.4",
-    "regex": "~0.1.1",
-    "colors": "~1.0.3"
-  }
+	"author": "Oscar Shrimpton",
+	"license": "Apache License Version 2.0",
+	"bugs": {
+		"url": "https://github.com/OscarOrSomething/Move-Bot/issues"
+	},
+	"devDependencies": {
+		"grunt-contrib-watch": "~0.6.1",
+		"grunt": "~0.4.5",
+		"grunt-contrib-coffee": "~0.12.0"
+	},
+	"dependencies": {
+		"walk": "~2.3.4",
+		"regex": "~0.1.1",
+		"colors": "~1.0.3",
+		"mv": "~2.0.3"
+	}
 }

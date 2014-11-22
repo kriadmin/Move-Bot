@@ -1,4 +1,5 @@
 fs = require "fs"
+mv = require 'mv'
 walk = require 'walk'
 Regex = require 'regex'
 colors = require 'colors'
@@ -15,27 +16,32 @@ fs.stat filePath, (err, stats) ->
 			console.log 'Parsed JSON successfully'
 			if schema.__ELSE__
 				console.log 'Compiling list of current files'.underline
-				filesWithPaths = []
-				files = []
+				files = {}
 				walker = walk.walk '.', {followLinks: false}
 				walker.on 'file', (root, stat, next) ->
 					console.log "Found #{root}/#{stat.name}"
-					filesWithPaths.push "#{root}/#{stat.name}"
-					files.push "#{stat.name}"
+					files[stat.name] = "#{root}/#{stat.name}"
 					next()
 				walker.on 'end', ->
-					console.log 'Organising'.underline
+					console.log 'Creating .movebot'.underline
+					fs.mkdir './.movebot', (err) ->
+						console.log 'Flattening into .movebot'.underline
+						for name,path of files
+							mv path, "./.movebot/#{name}", (err) ->
+								if err
+									throw new Error 'Failed to move files'.underline.red
+								else
+									console.log "Moved #{path} to .movebot/#{name}"
+					console.log 'Making organisation proposal'.underline
 					newFiles = []
 					for key, val of schema
 						regex = new Regex key
-						for file in files
+						for file,path of files
 							if regex.test file
 								newFiles.push "#{val}/#{file}"
-								files.splice files.indexOf(file), 1 if files.indexOf(file) > -1
 					for file in files
 						newFiles.push "#{schema.__ELSE__}/#{file}"
-						files.splice files.indexOf(file), 1 if files.indexOf(file) > -1
-					console.log 'TODO : Print out new organisation.'.red
+					console.log 'TODO : Print out organisation proposal properly'.red
 			else
 				throw new Error 'Not a valid Schema : Missing an __ELSE__ key'.underline.bold.red
 	else
