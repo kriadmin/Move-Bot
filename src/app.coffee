@@ -6,6 +6,7 @@ colors = require 'colors'
 yesno = require 'yesno'
 mv = require 'mv'
 rmdir = require 'rimraf'
+util = require 'util'
 filePath = process.argv[2]
 throw new Error 'No schema file passed'.underline.red if !filePath
 console.log "Running from #{filePath}".underline
@@ -47,7 +48,8 @@ fs.stat filePath, (err, stats) ->
 							console.log "No matches for #{file}, Using __ELSE__"
 							newFiles[file] = "#{schema.__ELSE__}/#{file}"
 							delete files[file]
-						console.log 'TODO : Print out organisation proposal properly'.red
+						console.log 'Please Review The Organisation Proposal'.underline.bgWhite.black
+						console.log util.inspect(newFiles, {showHidden: true, depth: null, colors: true})
 						yesno.ask 'Apply this organisation proposal?'.underline, false, (ok) ->
 							if ok
 								console.log 'LETS DO THIS!'.underline.green
