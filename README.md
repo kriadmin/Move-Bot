@@ -49,6 +49,4 @@ Docs/
 Other/
   other.md
 ```
-## Other options
-#####--dry
-Only shows how the directory would be but doesn't move anything. Useful for testing
+Note that the "__ELSE__" key IS required

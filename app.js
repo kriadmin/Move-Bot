@@ -1,14 +1,16 @@
-var Regex, colors, filePath, fs, mv, walk;
+var Regex, colors, filePath, fs, mv, walk, yesno;
 
 fs = require("fs");
-
-mv = require('mv');
 
 walk = require('walk');
 
 Regex = require('regex');
 
 colors = require('colors');
+
+yesno = require('yesno');
+
+mv = require('mv');
 
 filePath = process.argv[2];
 
@@ -31,46 +33,69 @@ fs.stat(filePath, function(err, stats) {
           followLinks: false
         });
         walker.on('file', function(root, stat, next) {
-          console.log("Found " + root + "/" + stat.name);
+          console.log("Found " + root + " / " + stat.name);
           files[stat.name] = "" + root + "/" + stat.name;
           return next();
         });
         return walker.on('end', function() {
-          var file, key, newFiles, path, regex, val, _i, _len;
           console.log('Creating .movebot'.underline);
-          fs.mkdir('./.movebot', function(err) {
-            var name, path, _results;
+          return fs.mkdir('./.movebot', function(err) {
+            var file, key, name, newFiles, path, regex, val;
+            console.log('Done');
             console.log('Flattening into .movebot'.underline);
-            _results = [];
             for (name in files) {
               path = files[name];
-              _results.push(mv(path, "./.movebot/" + name, function(err) {
-                if (err) {
-                  throw new Error('Failed to move files'.underline.red);
-                } else {
-                  return console.log("Moved " + path + " to .movebot/" + name);
-                }
-              }));
+              fs.renameSync(path, "./.movebot/" + name);
+              console.log("Moved " + name);
             }
-            return _results;
-          });
-          console.log('Making organisation proposal'.underline);
-          newFiles = [];
-          for (key in schema) {
-            val = schema[key];
-            regex = new Regex(key);
-            for (file in files) {
-              path = files[file];
-              if (regex.test(file)) {
-                newFiles.push("" + val + "/" + file);
+            console.log('Making organisation proposal'.underline);
+            newFiles = {};
+            for (key in schema) {
+              val = schema[key];
+              regex = new Regex(key);
+              for (file in files) {
+                path = files[file];
+                if (regex.test(file)) {
+                  console.log("" + file + " matches " + regex);
+                  newFiles[file] = "" + val + "/" + file;
+                  delete files[file];
+                }
               }
             }
-          }
-          for (_i = 0, _len = files.length; _i < _len; _i++) {
-            file = files[_i];
-            newFiles.push("" + schema.__ELSE__ + "/" + file);
-          }
-          return console.log('TODO : Print out organisation proposal properly'.red);
+            for (file in files) {
+              console.log("No matches for " + file + ", Using __ELSE__");
+              newFiles[file] = "" + schema.__ELSE__ + "/" + file;
+              delete files[file];
+            }
+            console.log(newFiles);
+            console.log('TODO : Print out organisation proposal properly'.red);
+            return yesno.ask('Apply this organisation proposal?'.underline, false, function(ok) {
+              var _results;
+              if (ok) {
+                console.log('LETS DO THIS!'.underline.green);
+                console.log('Removing directories'.underline);
+                console.log('Applying organisation proposal'.underline);
+                _results = [];
+                for (key in newFiles) {
+                  val = newFiles[key];
+                  console.log("Moving " + key + " to " + val);
+                  _results.push(mv("./.movebot/" + key, val, {
+                    mkdirp: true
+                  }, function(err) {
+                    if (err) {
+                      throw new Error(("Failed to move files : " + err).underline.red);
+                    } else {
+                      return console.log(("Moved " + key + " to " + val).green);
+                    }
+                  }));
+                }
+                return _results;
+              } else {
+                console.log('Oh well, Thank you for using movebot'.underline.red);
+                return process.exit();
+              }
+            });
+          });
         });
       } else {
         throw new Error('Not a valid Schema : Missing an __ELSE__ key'.underline.bold.red);
