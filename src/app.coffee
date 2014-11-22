@@ -18,8 +18,8 @@ fs.stat filePath, (err, stats) ->
 				files = []
 				walker = walk.walk './', {followLinks: false}
 				walker.on 'file', (root, stat, next) ->
-					console.log "Found #{stat.name}"
-					files.push stat.name
+					console.log "Found #{root}{stat.name}"
+					files.push "#{root}{stat.name}"
 					next()
 				walker.on 'end', ->
 					console.log 'Organising'.underline

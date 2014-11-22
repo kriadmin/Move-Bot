@@ -29,8 +29,8 @@ fs.stat(filePath, function(err, stats) {
           followLinks: false
         });
         walker.on('file', function(root, stat, next) {
-          console.log("Found " + stat.name);
-          files.push(stat.name);
+          console.log("Found " + root + "{stat.name}");
+          files.push("" + root + "{stat.name}");
           return next();
         });
         return walker.on('end', function() {
