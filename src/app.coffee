@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 fs = require "fs"
 walk = require 'walk'
 Regex = require 'regex'
@@ -34,12 +35,12 @@ fs.stat filePath, (err, stats) ->
 						console.log 'Making organisation proposal'.underline
 						newFiles = {}
 						for key, val of schema
-							regex = new Regex key
-							for file,path of files
-								if regex.test file
-									console.log "#{file} matches #{regex}"
-									newFiles[file] = "#{val}/#{file}"
-									delete files[file]
+								regex = new Regex key
+								for file,path of files
+									if regex.test file
+										console.log "#{file} matches #{regex}"
+										newFiles[file] = "#{val}/#{file}"
+										delete files[file]
 						for file of files
 							console.log "No matches for #{file}, Using __ELSE__"
 							newFiles[file] = "#{schema.__ELSE__}/#{file}"

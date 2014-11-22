@@ -1,6 +1,6 @@
 {
-	"name": "MoveBot",
-	"version": "0.0.0",
+	"name": "movebot",
+	"version": "1.0.0",
 	"description": "Organise your files with a simple JSON file!",
 	"main": "app.js",
 	"scripts": {
@@ -33,5 +33,9 @@
 		"colors": "~1.0.3",
 		"mv": "~2.0.3",
 		"yesno": "0.0.1"
-	}
+	},
+	"bin": {
+		"movebot": "app.js"
+	},
+	"preferGlobal": true
 }
