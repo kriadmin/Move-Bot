@@ -17,20 +17,22 @@ fs.stat(filePath, function(err, stats) {
     console.log('Found file');
     console.log('Trying to read file'.underline);
     return fs.readFile(filePath, 'utf8', function(err, data) {
-      var files, schema, walker;
+      var files, filesWithPaths, schema, walker;
       console.log('Read file successfully.');
       console.log('Trying to parse JSON'.underline);
       schema = JSON.parse(data);
       console.log('Parsed JSON successfully');
       if (schema.__ELSE__) {
         console.log('Compiling list of current files'.underline);
+        filesWithPaths = [];
         files = [];
         walker = walk.walk('.', {
           followLinks: false
         });
         walker.on('file', function(root, stat, next) {
           console.log("Found " + root + "/" + stat.name);
-          files.push("" + root + "/" + stat.name);
+          filesWithPaths.push("" + root + "/" + stat.name);
+          files.push("" + stat.name);
           return next();
         });
         return walker.on('end', function() {
