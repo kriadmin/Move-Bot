@@ -1,4 +1,4 @@
-var Regex, colors, filePath, fs, mv, walk, yesno;
+var Regex, colors, filePath, fs, mv, rmdir, walk, yesno;
 
 fs = require("fs");
 
@@ -12,9 +12,13 @@ yesno = require('yesno');
 
 mv = require('mv');
 
+rmdir = require('rimraf');
+
 filePath = process.argv[2];
 
-throw new Error('');
+if (!filePath) {
+  throw new Error('No schema file passed'.underline.red);
+}
 
 console.log(("Running from " + filePath).underline);
 
@@ -69,29 +73,38 @@ fs.stat(filePath, function(err, stats) {
               newFiles[file] = "" + schema.__ELSE__ + "/" + file;
               delete files[file];
             }
-            console.log(newFiles);
             console.log('TODO : Print out organisation proposal properly'.red);
             return yesno.ask('Apply this organisation proposal?'.underline, false, function(ok) {
-              var _results;
               if (ok) {
                 console.log('LETS DO THIS!'.underline.green);
                 console.log('Removing directories'.underline);
-                console.log('Applying organisation proposal'.underline);
-                _results = [];
-                for (key in newFiles) {
-                  val = newFiles[key];
-                  console.log("Moving " + key + " to " + val);
-                  _results.push(mv("./.movebot/" + key, val, {
-                    mkdirp: true
-                  }, function(err) {
-                    if (err) {
-                      throw new Error(("Failed to move files : " + err).underline.red);
-                    } else {
-                      return console.log(("Moved " + key + " to " + val).green);
+                return fs.readDir('./', function(err, files) {
+                  var dir, _i, _len, _results;
+                  if (!err && files) {
+                    for (_i = 0, _len = files.length; _i < _len; _i++) {
+                      dir = files[_i];
+                      rimraf.sync(dir);
                     }
-                  }));
-                }
-                return _results;
+                    console.log('Applying organisation proposal'.underline);
+                    _results = [];
+                    for (key in newFiles) {
+                      val = newFiles[key];
+                      console.log("Moving " + key + " to " + val);
+                      _results.push(mv("./.movebot/" + key, val, {
+                        mkdirp: true
+                      }, function(err) {
+                        if (err) {
+                          throw new Error(("Failed to move files : " + err).underline.red);
+                        } else {
+                          return console.log(("Moved " + key + " to " + val).green);
+                        }
+                      }));
+                    }
+                    return _results;
+                  } else {
+                    throw new Error('Couldn\'t get a list of directories'.underline.red);
+                  }
+                });
               } else {
                 console.log('Oh well, Thank you for using movebot'.underline.red);
                 return process.exit();
@@ -104,7 +117,7 @@ fs.stat(filePath, function(err, stats) {
       }
     });
   } else {
-    throw new Error('Couldn\'t find file');
+    throw new Error('Couldn\'t find file'.underline.red);
   }
 });
 

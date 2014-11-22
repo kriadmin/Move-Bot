@@ -5,6 +5,7 @@ Regex = require 'regex'
 colors = require 'colors'
 yesno = require 'yesno'
 mv = require 'mv'
+rmdir = require 'rimraf'
 filePath = process.argv[2]
 throw new Error 'No schema file passed'.underline.red if !filePath
 console.log "Running from #{filePath}".underline
@@ -51,19 +52,25 @@ fs.stat filePath, (err, stats) ->
 							if ok
 								console.log 'LETS DO THIS!'.underline.green
 								console.log 'Removing directories'.underline
-								console.log 'Applying organisation proposal'.underline
-								for key,val of newFiles
-									console.log "Moving #{key} to #{val}"
-									mv "./.movebot/#{key}", val, {mkdirp: true}, (err) ->
-										if err
-											throw new Error "Failed to move files : #{err}".underline.red
-										else
-											console.log "Moved #{key} to #{val}".green
+								fs.readDir './', (err, files) ->
+									if !err and files
+										for dir in files
+											rimraf.sync dir
+										console.log 'Applying organisation proposal'.underline
+										for key,val of newFiles
+											console.log "Moving #{key} to #{val}"
+											mv "./.movebot/#{key}", val, {mkdirp: true}, (err) ->
+												if err
+													throw new Error "Failed to move files : #{err}".underline.red
+												else
+													console.log "Moved #{key} to #{val}".green
+									else
+										throw new Error 'Couldn\'t get a list of directories'.underline.red
 							else
 								console.log 'Oh well, Thank you for using movebot'.underline.red
 								process.exit()
 			else
 				throw new Error 'Not a valid Schema : Missing an __ELSE__ key'.underline.bold.red
 	else
-		throw new Error 'Couldn\'t find file'
+		throw new Error 'Couldn\'t find file'.underline.red
 console.log 'Trying to find file'.underline
