@@ -16,10 +16,10 @@ fs.stat filePath, (err, stats) ->
 			if schema.__ELSE__
 				console.log 'Compiling list of current files'.underline
 				files = []
-				walker = walk.walk './', {followLinks: false}
+				walker = walk.walk '.', {followLinks: false}
 				walker.on 'file', (root, stat, next) ->
-					console.log "Found #{root}{stat.name}"
-					files.push "#{root}{stat.name}"
+					console.log "Found #{root}/#{stat.name}"
+					files.push "#{root}/#{stat.name}"
 					next()
 				walker.on 'end', ->
 					console.log 'Organising'.underline

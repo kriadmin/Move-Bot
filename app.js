@@ -25,12 +25,12 @@ fs.stat(filePath, function(err, stats) {
       if (schema.__ELSE__) {
         console.log('Compiling list of current files'.underline);
         files = [];
-        walker = walk.walk('./', {
+        walker = walk.walk('.', {
           followLinks: false
         });
         walker.on('file', function(root, stat, next) {
-          console.log("Found " + root + "{stat.name}");
-          files.push("" + root + "{stat.name}");
+          console.log("Found " + root + "/" + stat.name);
+          files.push("" + root + "/" + stat.name);
           return next();
         });
         return walker.on('end', function() {
