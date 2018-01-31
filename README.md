@@ -43,7 +43,7 @@ This will result in the following directory structure
 Docs/
   Text/
     hi.txt
-	test.txt
+    test.txt
   Awesome/
     awesome.docx
 Other/
